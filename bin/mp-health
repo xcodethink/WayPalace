@@ -1,0 +1,3 @@
+#!/bin/bash
+# mp-health - 本地长期记忆系统统一健康检查
+exec ${WAYPALACE_VENV}/bin/python ${WAYPALACE_HOME}/scripts/mp_health.py "$@"

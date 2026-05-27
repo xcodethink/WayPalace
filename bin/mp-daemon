@@ -1,0 +1,52 @@
+#!/bin/bash
+# mp-daemon - control the memory daemon
+set -e
+
+PLIST=$HOME/Library/LaunchAgents/com.mempalace.daemon.plist
+LABEL=com.mempalace.daemon
+SOCKET=$HOME/.mempalace-zh/daemon.sock
+PID_FILE=$HOME/.mempalace-zh/daemon.pid
+
+cmd=${1:-status}
+
+case "$cmd" in
+  start)
+    launchctl load "$PLIST" 2>/dev/null || true
+    launchctl start "$LABEL" 2>/dev/null || true
+    echo "Daemon started (launchd managed)"
+    ;;
+  stop)
+    launchctl stop "$LABEL" 2>/dev/null || true
+    launchctl unload "$PLIST" 2>/dev/null || true
+    rm -f "$SOCKET" "$PID_FILE"
+    echo "Daemon stopped"
+    ;;
+  restart)
+    $0 stop
+    sleep 1
+    $0 start
+    ;;
+  status)
+    if [ -e "$SOCKET" ]; then
+      RESP=$(echo '{"cmd":"ping"}' | nc -U "$SOCKET" -w 2 2>/dev/null || echo "")
+      if [ -n "$RESP" ]; then
+        echo "running: $RESP"
+      else
+        echo "socket exists but not responding"
+      fi
+    else
+      echo "not running"
+    fi
+    ;;
+  logs)
+    tail -f ~/.mempalace-zh/logs/daemon.log
+    ;;
+  search)
+    shift
+    echo "{\"cmd\":\"search\",\"query\":\"$*\",\"limit\":5,\"threshold\":0.5}" | nc -U "$SOCKET" -w 5
+    ;;
+  *)
+    echo "Usage: mp-daemon {start|stop|restart|status|logs|search <query>}"
+    exit 1
+    ;;
+esac

@@ -1,0 +1,3 @@
+#!/bin/bash
+# mp-mine - 矿挖文件或目录到指定 wing
+exec ${WAYPALACE_VENV}/bin/python ${WAYPALACE_HOME}/scripts/memory_mine.py "$@"

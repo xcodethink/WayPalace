@@ -1,0 +1,67 @@
+# WayPalace .gitignore — WHITELIST-ORIENTED (default deny)
+# Per skill 16 file 10 discipline 2: nothing escapes by default.
+
+# Python build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Testing
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# Virtual envs
+.venv/
+venv/
+env/
+.env
+.env.*
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Data dirs (NEVER commit user data)
+data/
+chromadb/
+*.sqlite3
+*.sqlite3-journal
+metrics/
+archive/
+backup/
+logs/
+
+# Secrets (defense in depth)
+*.key
+*.pem
+secrets.*
+credentials.json
+.npmrc
+.pypirc
+
+# Working clone of public repo (kept outside this dir; never commit by accident)
+working_clone/
+
+# Maintainer-private overrides (this is where your personal config goes if you fork)
+local-overrides/
+*.local.yaml
+*.local.toml
+
+# Governance directory — private workflow files, NEVER push to public repo
+_governance/

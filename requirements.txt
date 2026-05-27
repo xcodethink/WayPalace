@@ -1,0 +1,18 @@
+# WayPalace runtime requirements
+# Install with: pip install -r requirements.txt
+# For full feature set including hybrid retrieval, also: pip install -r requirements-hybrid.txt
+
+# Core dependencies
+chromadb>=1.5.0,<2.0
+sentence-transformers>=2.7.0
+pyyaml>=6.0
+
+# Hybrid retrieval (sparse store + RRF fusion)
+FlagEmbedding>=1.2.0
+
+# Note: For LLM assist (auto-classification + summarization), install one of:
+#   pip install waypalace[llm-mlx]      # Mac with 64GB+ unified memory
+#   pip install waypalace[llm-small]    # Smaller HuggingFace models
+#   pip install waypalace[llm-external] # External OpenAI-compatible endpoint
+# Without any of these, classification falls back to "default namespace" and
+# summarization is skipped (system still works, just no semantic enrichment).

@@ -1,0 +1,3 @@
+#!/bin/bash
+# mp-wings-review - D003 Wing Lifecycle Management
+exec ${WAYPALACE_VENV}/bin/python ${WAYPALACE_HOME}/scripts/mp_wings_review.py "$@"

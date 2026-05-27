@@ -1,0 +1,21 @@
+#!/bin/bash
+# mp-status - 显示记忆系统状态
+exec ${WAYPALACE_VENV}/bin/python -c "
+import sys
+sys.path.insert(0, '${WAYPALACE_HOME}/scripts')
+import memory_core
+
+stats = memory_core.get_wing_stats()
+total = memory_core.get_total_count()
+
+print('=' * 60)
+print(f'  Local Memory System Status')
+print('=' * 60)
+print(f'  Total chunks:  {total}')
+print(f'  Wing count:    {len(stats)}')
+print(f'  Total files:   {sum(s[\"files\"] for s in stats.values())}')
+print()
+print('  Wings (sorted by chunks):')
+for wing, info in sorted(stats.items(), key=lambda x: -x[1]['chunks']):
+    print(f'    {wing:30s} files={info[\"files\"]:4d}  chunks={info[\"chunks\"]:5d}')
+"

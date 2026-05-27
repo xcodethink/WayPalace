@@ -1,0 +1,3 @@
+#!/bin/bash
+# mp-aging - 查看记忆老化数据
+exec ${WAYPALACE_VENV}/bin/python ${WAYPALACE_HOME}/scripts/memory_aging.py "$@"

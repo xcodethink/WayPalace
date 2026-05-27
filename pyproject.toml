@@ -1,0 +1,98 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "waypalace"
+version = "0.1.0"
+description = "Local-first long-term memory system for AI coding assistants with multi-signal lifecycle, hybrid retrieval, and zero-telemetry by design."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+    { name = "WayPalace contributors" }
+]
+keywords = [
+    "memory",
+    "rag",
+    "retrieval",
+    "vector-database",
+    "chromadb",
+    "bge-m3",
+    "claude-code",
+    "agent-memory",
+    "local-first",
+    "chinese-nlp",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "chromadb>=1.5.0,<2.0",
+    "sentence-transformers>=2.7.0",
+    "FlagEmbedding>=1.2.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+# Tier 1: small local LLM (no GPU required, runs on most machines)
+llm-small = [
+    "transformers>=4.40.0",
+]
+# Tier 2: large local LLM via MLX (Mac with 64GB+ unified memory recommended)
+llm-mlx = [
+    "mlx-lm>=0.31.0",
+]
+# Tier 3: rely on external OpenAI-compatible endpoint (no local LLM)
+llm-external = [
+    "openai>=1.30.0",
+]
+# Development
+dev = [
+    "pytest>=9.0",
+    "ruff>=0.5.0",
+    "mypy>=1.10",
+]
+
+[project.urls]
+Homepage = "https://github.com/xcodethink/WayPalace"
+Repository = "https://github.com/xcodethink/WayPalace"
+Issues = "https://github.com/xcodethink/WayPalace/issues"
+Changelog = "https://github.com/xcodethink/WayPalace/blob/main/CHANGELOG.md"
+
+[project.scripts]
+# CLI entry points (will be available after `pip install waypalace`)
+mp-search = "waypalace.cli:search_main"
+mp-mine = "waypalace.cli:mine_main"
+mp-status = "waypalace.cli:status_main"
+mp-health = "waypalace.cli:health_main"
+mp-wings-review = "waypalace.cli:wings_review_main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["waypalace*"]
+exclude = ["tests*", "examples*", "docs*", "templates*", "hooks*", "bin*", "releases*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+addopts = "-q --tb=short"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E501"]

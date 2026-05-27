@@ -1,0 +1,3 @@
+#!/bin/bash
+# mp-search-all - 跨项目搜索：所有 wings，按 wing 分组，阈值更宽松
+exec ${WAYPALACE_VENV}/bin/python ${WAYPALACE_HOME}/scripts/memory_search.py --all "$@"

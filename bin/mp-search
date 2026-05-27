@@ -1,0 +1,3 @@
+#!/bin/bash
+# mp-search - 智能搜索：当前项目 wing + global wing，阈值过滤
+exec ${WAYPALACE_VENV}/bin/python ${WAYPALACE_HOME}/scripts/memory_search.py "$@"
