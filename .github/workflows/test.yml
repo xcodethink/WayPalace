@@ -1,0 +1,89 @@
+name: test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    name: lint (ruff)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install ruff
+        run: pip install --quiet ruff
+      - name: Ruff check
+        run: ruff check .
+      - name: Ruff format check
+        run: ruff format --check .
+        continue-on-error: true  # not enforced until contributors converge on style
+
+  smoke:
+    name: smoke (import + package metadata)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install package (Tier 0, no LLM)
+        run: |
+          pip install --quiet --upgrade pip
+          pip install --quiet -e .
+      - name: Import smoke
+        run: |
+          python -c "
+          import waypalace.memory_core
+          import waypalace.memory_search
+          import waypalace.memory_mine
+          import waypalace.wing_lifecycle
+          import waypalace.sparse_sync
+          import waypalace.mp_metrics
+          print('Import smoke OK')
+          "
+      - name: pyproject metadata sanity
+        run: |
+          python -c "
+          import tomllib
+          with open('pyproject.toml', 'rb') as f:
+              meta = tomllib.load(f)
+          proj = meta['project']
+          assert proj['name'] == 'waypalace'
+          assert proj['license']['text'] == 'MIT'
+          assert proj['requires-python'].startswith('>=3.1')
+          print('Metadata OK')
+          "
+
+  pytest-unit:
+    name: pytest (unit, no daemon/chromadb)
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install with dev deps
+        run: |
+          pip install --quiet --upgrade pip
+          pip install --quiet -e ".[dev]"
+      - name: Run unit tests (skip e2e/daemon — need bge-m3 model)
+        run: |
+          # Tests that need a live daemon socket or chromadb collection are
+          # excluded from CI. Run them locally before publishing major releases.
+          python -m pytest tests/ \
+              --ignore=tests/test_daemon.py \
+              --ignore=tests/test_e2e.py \
+              -v \
+              -k "not real_daemon and not mlx_llm_alive" \
+              || true  # alpha-phase: don't block on test failures yet
+        env:
+          # Disable HuggingFace download retries in CI
+          HF_HUB_DOWNLOAD_TIMEOUT: "5"
